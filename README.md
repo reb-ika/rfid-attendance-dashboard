@@ -244,10 +244,9 @@ https://wokwi.com/projects/461212710331223041
 
 ### Dashboard View
 
-```markdown
-![Dashboard Screenshot]
+## 📸 Dashboard Screenshot
+
 ![RFID Dashboard](images/dashboard.png)
-```
 
 *Dashboard showing LCD emulator, RFID controls, attendance registry, and activity log.*
 
