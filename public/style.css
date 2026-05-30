@@ -1,0 +1,486 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    min-height: 100vh;
+    color: #fff;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+header {
+    text-align: center;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.header-badge {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+header h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+header p {
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+/* Dashboard Grid */
+.dashboard {
+    display: grid;
+    grid-template-columns: 1fr 0.9fr;
+    gap: 25px;
+}
+
+/* Panels */
+.panel {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 24px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.panel h2 {
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    border-left: 4px solid #667eea;
+    padding-left: 15px;
+}
+
+/* LCD Screen */
+.lcd-container {
+    background: #0a0a0a;
+    border-radius: 16px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.lcd-label {
+    font-size: 0.75rem;
+    color: #888;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.lcd-screen {
+    background: #0a3a0a;
+    padding: 20px;
+    border-radius: 12px;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+    border: 2px solid #1a5a1a;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.lcd-line1, .lcd-line2 {
+    color: #0f0;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.lcd-line1 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.lcd-line2 {
+    font-size: 1rem;
+}
+
+/* LEDs */
+.led-container {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    margin-bottom: 25px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+}
+
+.led {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.led-light {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #2a2a2a;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    transition: all 0.1s ease;
+}
+
+.led-light.green.active {
+    background: #00ff00;
+    box-shadow: 0 0 25px #00ff00, 0 0 10px #00ff00;
+}
+
+.led-light.red.active {
+    background: #ff0000;
+    box-shadow: 0 0 25px #ff0000, 0 0 10px #ff0000;
+}
+
+.led span {
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+/* RFID Reader */
+.rfid-reader h3 {
+    margin-bottom: 15px;
+    font-size: 1rem;
+    color: #ddd;
+}
+
+.reader-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    font-size: 0.85rem;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    background: #2ecc71;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.card-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+}
+
+.card-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 15px 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #fff;
+    text-align: center;
+}
+
+.card-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-3px);
+    border-color: #667eea;
+}
+
+.card-btn.tapped {
+    transform: scale(0.96);
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.card-btn.unknown {
+    border-color: #e74c3c;
+}
+
+.card-btn.unknown:hover {
+    background: rgba(231, 76, 60, 0.2);
+}
+
+.card-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.card-name {
+    font-weight: bold;
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+}
+
+.card-uid {
+    font-size: 0.65rem;
+    color: #888;
+    font-family: monospace;
+}
+
+/* Student Registry */
+.stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 18px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-value {
+    font-size: 2.2rem;
+    font-weight: bold;
+    display: block;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.student-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.student-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 14px;
+    padding: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    transition: all 0.2s;
+}
+
+.student-card.present {
+    border-left: 4px solid #2ecc71;
+    background: rgba(46, 204, 113, 0.08);
+}
+
+.student-card.absent {
+    border-left: 4px solid #e74c3c;
+}
+
+.student-info {
+    flex: 1;
+}
+
+.student-name {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.student-uid {
+    font-family: monospace;
+    font-size: 0.65rem;
+    color: #888;
+    margin-top: 4px;
+}
+
+.student-status {
+    font-size: 0.8rem;
+}
+
+.student-time {
+    font-size: 0.7rem;
+    color: #aaa;
+    font-family: monospace;
+}
+
+/* Log Panel */
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.log-header h2 {
+    margin-bottom: 0;
+}
+
+.log-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-small {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 8px 18px;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+}
+
+.btn-small:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+}
+
+.log-container {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 16px;
+    padding: 12px;
+    height: 320px;
+    overflow-y: auto;
+}
+
+.log-entry {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    gap: 15px;
+    font-size: 0.8rem;
+    font-family: monospace;
+    align-items: center;
+}
+
+.log-entry.granted {
+    color: #2ecc71;
+}
+
+.log-entry.denied {
+    color: #e74c3c;
+}
+
+.log-entry.info {
+    color: #f39c12;
+}
+
+.log-time {
+    width: 80px;
+    flex-shrink: 0;
+}
+
+.log-status {
+    width: 30px;
+    flex-shrink: 0;
+}
+
+.log-name {
+    flex: 1;
+}
+
+.log-uid {
+    width: 100px;
+    flex-shrink: 0;
+    color: #888;
+}
+
+.log-empty {
+    text-align: center;
+    color: #666;
+    padding: 50px 20px;
+}
+
+.log-empty span {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.log-empty p {
+    font-size: 0.85rem;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 25px;
+    margin-top: 30px;
+    color: #555;
+    font-size: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Responsive */
+@media (max-width: 1000px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+    
+    header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .header-badge {
+        position: static;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+}

@@ -1,0 +1,4 @@
+node_modules/
+attendance_log.txt
+.DS_Store
+*.log

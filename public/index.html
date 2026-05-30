@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFID Attendance System | AASTU</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="header-badge">AASTU</div>
+            <h1>🏫 RFID Digital Attendance System</h1>
+            <p>Real-time Visual Dashboard | Embedded Systems Project</p>
+        </header>
+
+        <div class="dashboard">
+            <!-- LEFT PANEL: Hardware Simulation -->
+            <div class="panel hardware-panel">
+                <h2>🔧 Hardware Simulation</h2>
+                
+                <!-- LCD Display -->
+                <div class="lcd-container">
+                    <div class="lcd-label">📺 LCD 1602 (I2C)</div>
+                    <div class="lcd-screen">
+                        <div class="lcd-line1" id="lcdLine1">Attendance Sys</div>
+                        <div class="lcd-line2" id="lcdLine2">Tap a card</div>
+                    </div>
+                </div>
+
+                <!-- LED Indicators -->
+                <div class="led-container">
+                    <div class="led">
+                        <div class="led-light green" id="ledGreen"></div>
+                        <span>✅ Access LED</span>
+                    </div>
+                    <div class="led">
+                        <div class="led-light red" id="ledRed"></div>
+                        <span>❌ Denied LED</span>
+                    </div>
+                </div>
+
+                <!-- RFID Reader -->
+                <div class="rfid-reader">
+                    <h3>🪪 MFRC522 RFID Reader</h3>
+                    <div class="reader-status">
+                        <span class="status-dot"></span>
+                        <span>Ready - Tap a card</span>
+                    </div>
+                    <div class="card-buttons">
+                        <button class="card-btn" data-card="card_robel">
+                            <div class="card-icon">🪪</div>
+                            <div class="card-name">Robel Desalegn</div>
+                            <div class="card-uid">01:02:03:04</div>
+                        </button>
+                        <button class="card-btn" data-card="card_paulos">
+                            <div class="card-icon">🪪</div>
+                            <div class="card-name">Paulos Elias</div>
+                            <div class="card-uid">11:22:33:44</div>
+                        </button>
+                        <button class="card-btn" data-card="card_redeat">
+                            <div class="card-icon">🪪</div>
+                            <div class="card-name">Redeat Birhane</div>
+                            <div class="card-uid">55:66:77:88</div>
+                        </button>
+                        <button class="card-btn" data-card="card_rediet">
+                            <div class="card-icon">🪪</div>
+                            <div class="card-name">Rediet Geremew</div>
+                            <div class="card-uid">AA:BB:CC:DD</div>
+                        </button>
+                        <button class="card-btn unknown" data-card="card_unknown">
+                            <div class="card-icon">❓</div>
+                            <div class="card-name">Unknown Card</div>
+                            <div class="card-uid">FF:FF:FF:FF</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL TOP: Student Registry -->
+            <div class="panel registry-panel">
+                <h2>📋 Student Registry</h2>
+                <div class="stats">
+                    <div class="stat-card">
+                        <span class="stat-value" id="presentCount">0</span>
+                        <span class="stat-label">Present Today</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="totalCount">4</span>
+                        <span class="stat-label">Total Students</span>
+                    </div>
+                </div>
+                <div class="student-list" id="studentList">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL BOTTOM: Attendance Log -->
+            <div class="panel log-panel">
+                <div class="log-header">
+                    <h2>📜 Attendance Log</h2>
+                    <div class="log-buttons">
+                        <button class="btn-small" id="clearLogBtn">🗑️ Clear Log</button>
+                        <button class="btn-small" id="resetBtn">🔄 Reset All</button>
+                    </div>
+                </div>
+                <div class="log-container" id="logContainer">
+                    <div class="log-empty">
+                        <span>🎴</span>
+                        <p>Tap a card to see real-time events...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Digital Attendance System | RFID-based Access Control | Addis Ababa Science & Technology University 2026</p>
+        </footer>
+    </div>
+
+    <script>
+        const socket = io();
+
+        // ===== SOCKET EVENT HANDLERS =====
+        socket.on('status-update', (data) => {
+            document.getElementById('presentCount').textContent = data.presentCount;
+            updateStudentList(data.students);
+        });
+
+        socket.on('lcd-update', (lcd) => {
+            document.getElementById('lcdLine1').textContent = lcd.line1;
+            document.getElementById('lcdLine2').textContent = lcd.line2;
+        });
+
+        socket.on('led-flash', (data) => {
+            const ledGreen = document.getElementById('ledGreen');
+            const ledRed = document.getElementById('ledRed');
+            
+            if (data.color === 'green') {
+                ledGreen.classList.add('active');
+                setTimeout(() => ledGreen.classList.remove('active'), 1500);
+            } else if (data.color === 'red') {
+                ledRed.classList.add('active');
+                setTimeout(() => ledRed.classList.remove('active'), 1500);
+            }
+        });
+
+        socket.on('log-update', (log) => {
+            addLogEntry(log);
+        });
+
+        socket.on('log-cleared', () => {
+            const container = document.getElementById('logContainer');
+            container.innerHTML = `
+                <div class="log-empty">
+                    <span>📋</span>
+                    <p>Log cleared. Tap a card to start new session.</p>
+                </div>
+            `;
+        });
+
+        // ===== UI UPDATE FUNCTIONS =====
+        function updateStudentList(students) {
+            const container = document.getElementById('studentList');
+            container.innerHTML = '';
+            
+            for (const [uid, student] of Object.entries(students)) {
+                const card = document.createElement('div');
+                card.className = `student-card ${student.present ? 'present' : 'absent'}`;
+                card.innerHTML = `
+                    <div class="student-info">
+                        <div class="student-name">${student.name}</div>
+                        <div class="student-uid">${uid}</div>
+                    </div>
+                    <div class="student-status">${student.present ? '✅ Present' : '⭕ Absent'}</div>
+                    <div class="student-time">${student.time || '—'}</div>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        function addLogEntry(log) {
+            const container = document.getElementById('logContainer');
+            
+            // Remove empty message if present
+            if (container.querySelector('.log-empty')) {
+                container.innerHTML = '';
+            }
+            
+            const entry = document.createElement('div');
+            let statusIcon = '';
+            let statusClass = '';
+            
+            if (log.status === 'GRANTED') {
+                statusIcon = '✅';
+                statusClass = 'granted';
+            } else if (log.status === 'DENIED') {
+                statusIcon = '❌';
+                statusClass = 'denied';
+            } else if (log.status === 'ALREADY') {
+                statusIcon = '🔄';
+                statusClass = 'info';
+            } else {
+                statusIcon = '📢';
+                statusClass = 'info';
+            }
+            
+            entry.className = `log-entry ${statusClass}`;
+            entry.innerHTML = `
+                <span class="log-time">${log.timestamp.slice(-8)}</span>
+                <span class="log-status">${statusIcon}</span>
+                <span class="log-name">${log.name}</span>
+                <span class="log-uid">${log.uid}</span>
+            `;
+            container.insertBefore(entry, container.firstChild);
+            
+            // Keep only last 20 visible
+            while (container.children.length > 20) {
+                container.removeChild(container.lastChild);
+            }
+        }
+
+        // ===== API CALLS =====
+        async function tapCard(cardId) {
+            const btn = document.querySelector(`[data-card="${cardId}"]`);
+            btn.classList.add('tapped');
+            setTimeout(() => btn.classList.remove('tapped'), 300);
+            
+            try {
+                const response = await fetch('/api/tap', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ card_id: cardId })
+                });
+                const data = await response.json();
+                
+                // Optional: Show toast for feedback
+                if (data.success) {
+                    console.log('✅', data.message);
+                } else {
+                    console.log('❌', data.message);
+                }
+            } catch (error) {
+                console.error('Error tapping card:', error);
+            }
+        }
+
+        async function resetAttendance() {
+            if (confirm('⚠️ Reset all attendance for today? This cannot be undone.')) {
+                await fetch('/api/reset', { method: 'POST' });
+            }
+        }
+
+        async function clearLog() {
+            if (confirm('Clear attendance log history?')) {
+                await fetch('/api/clear_log', { method: 'POST' });
+            }
+        }
+
+        // ===== EVENT LISTENERS =====
+        document.querySelectorAll('.card-btn').forEach(btn => {
+            btn.addEventListener('click', () => tapCard(btn.dataset.card));
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', resetAttendance);
+        document.getElementById('clearLogBtn').addEventListener('click', clearLog);
+    </script>
+</body>
+</html>
